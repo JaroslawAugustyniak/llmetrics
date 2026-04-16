@@ -47,6 +47,31 @@ services:
       - default
       - nginx-proxy-network
 
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: starter_queue_worker
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_KEY: ${APP_KEY}
+      QUEUE_CONNECTION: database
+    command: php artisan queue:work --delay=3 --max-jobs=1000 --max-time=3600
+    depends_on:
+      - mysql
+      - backend
+    networks:
+      - default
+    restart: unless-stopped
+
   frontend:
     image: node:20-bullseye
     container_name: starter_frontend

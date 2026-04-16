@@ -33,7 +33,7 @@ class AuthService
             'verification_code_expires' => now()->addMinutes(15),
         ]);
 
-        Mail::send(new VerifyEmailMail($user, $code));
+        Mail::queue(new VerifyEmailMail($user, $code));
     }
 
     public function sendVerificationEmail(User $user): void
@@ -85,7 +85,7 @@ class AuthService
             'reset_password_expires' => now()->addMinutes(15),
         ]);
 
-        Mail::send(new ResetPasswordMail($user, $token));
+        Mail::queue(new ResetPasswordMail($user, $token));
     }
 
     public function resetPassword(User $user, string $token, string $newPassword): bool
