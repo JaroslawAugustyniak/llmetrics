@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: starter_postgres
+    container_name: llmetrics_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -22,12 +22,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: starter_backend
+    container_name: llmetrics_backend
     working_dir: /app
     volumes:
       - ./backend:/app
     environment:
-      VIRTUAL_HOST: api.starter.localhost
+      VIRTUAL_HOST: api.llmetrics.localhost
       VIRTUAL_PORT: 8000
       DB_CONNECTION: pgsql
       DB_HOST: postgres
@@ -51,7 +51,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: starter_queue_worker
+    container_name: llmetrics_queue_worker
     working_dir: /app
     volumes:
       - ./backend:/app
@@ -76,16 +76,16 @@ services:
 
   frontend:
     image: node:20-bullseye
-    container_name: starter_frontend
+    container_name: llmetrics_frontend
     working_dir: /web
     volumes:
       - ./frontend:/web
     command: sh -c "npm install && npm run dev"
     environment:
-      VIRTUAL_HOST: starter.localhost
+      VIRTUAL_HOST: llmetrics.localhost
       VIRTUAL_PORT: 3000
     extra_hosts:
-      - "api.starter.localhost:host-gateway"
+      - "api.llmetrics.localhost:host-gateway"
     expose:
       - "3000"
     depends_on:
