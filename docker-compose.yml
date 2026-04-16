@@ -1,19 +1,18 @@
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: starter_mysql
+  postgres:
+    image: postgres:16-alpine
+    container_name: starter_postgres
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       timeout: 20s
       retries: 10
     networks:
@@ -30,9 +29,9 @@ services:
     environment:
       VIRTUAL_HOST: api.starter.localhost
       VIRTUAL_PORT: 8000
-      DB_CONNECTION: mysql
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
       DB_DATABASE: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -42,7 +41,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
+      postgres:
+        condition: service_healthy
     networks:
       - default
       - nginx-proxy-network
@@ -56,9 +56,9 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DB_CONNECTION: mysql
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
       DB_DATABASE: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -66,8 +66,10 @@ services:
       QUEUE_CONNECTION: database
     command: php artisan queue:work --delay=3 --max-jobs=1000 --max-time=3600
     depends_on:
-      - mysql
-      - backend
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started
     networks:
       - default
     restart: unless-stopped
@@ -93,7 +95,7 @@ services:
       - nginx-proxy-network
 
 volumes:
-  mysql_data:
+  postgres_data:
     driver: local
 
 networks:

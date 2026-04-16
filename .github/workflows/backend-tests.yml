@@ -1,0 +1,88 @@
+name: Backend Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-tests.yml'
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    name: Laravel Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: starter_test
+          POSTGRES_USER: starter_user
+          POSTGRES_PASSWORD: starter_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php-action@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo, pdo_pgsql, zip, mbstring, bcmath
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: backend/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Copy .env
+        working-directory: ./backend
+        run: cp .env.example .env
+
+      - name: Generate application key
+        working-directory: ./backend
+        run: php artisan key:generate
+
+      - name: Run migrations
+        working-directory: ./backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: starter_test
+          DB_USERNAME: starter_user
+          DB_PASSWORD: starter_password
+        run: php artisan migrate
+
+      - name: Run tests
+        working-directory: ./backend
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: starter_test
+          DB_USERNAME: starter_user
+          DB_PASSWORD: starter_password
+        run: php artisan test --parallel
