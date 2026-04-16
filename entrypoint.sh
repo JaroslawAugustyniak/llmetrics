@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Wait for MySQL to be ready
-echo "Waiting for MySQL to be ready..."
+# Wait for PostgreSQL to be ready
+echo "Waiting for PostgreSQL to be ready..."
 for i in {1..30}; do
-  if nc -z mysql 3306 2>/dev/null; then
-    echo "MySQL is ready!"
+  if nc -z postgres 5432 2>/dev/null; then
+    echo "PostgreSQL is ready!"
     break
   fi
-  echo "MySQL not ready, waiting... ($i/30)"
+  echo "PostgreSQL not ready, waiting... ($i/30)"
   sleep 1
 done
 
@@ -33,6 +33,6 @@ php artisan cache:clear
 echo "Running migrations..."
 php artisan migrate --force
 
-# Start dev server
-echo "Starting Laravel development server..."
-php artisan serve --host=0.0.0.0 --port=8000
+# Start supervisord (manages nginx + php-fpm)
+echo "Starting supervisor..."
+supervisord -c /etc/supervisor/conf.d/supervisord.conf

@@ -26,6 +26,8 @@ services:
     working_dir: /app
     volumes:
       - ./backend:/app
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.main_domain: api.llmetrics.localhost
     environment:
       VIRTUAL_HOST: api.llmetrics.localhost
       VIRTUAL_PORT: 8000
@@ -38,8 +40,6 @@ services:
       APP_KEY: ${APP_KEY}
     expose:
       - "8000"
-    ports:
-      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
