@@ -24,7 +24,7 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
         const token = localStorage.getItem('access_token');
         if (!token) return;
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://api.starter.localhost'}/api/auth/profile`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://api.llmetrics.localhost/'}/api/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -72,7 +72,7 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
       try {
         const token = localStorage.getItem('access_token');
         if (token) {
-          await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://api.starter.localhost'}/api/auth/logout`, {
+          await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://api.llmetrics.localhost/'}/api/auth/logout`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,

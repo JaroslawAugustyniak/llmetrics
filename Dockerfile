@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y \
     netcat-openbsd \
     libzip-dev \
     zlib1g-dev \
-    libpq-dev \
+    default-mysql-client \
     nginx \
     supervisor \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    && docker-php-ext-install pdo pdo_mysql zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

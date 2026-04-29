@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useTranslations } from 'next-intl';
 import Image from "next/image";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.starter.localhost";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.llmetrics.localhost/";
 
 export default function VerifyEmailPage() {
   const t = useTranslations('auth');

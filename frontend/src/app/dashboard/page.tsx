@@ -21,7 +21,7 @@ export default function DashboardPage() {
     // Fetch user profile to get name
     const fetchUserProfile = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://api.starter.localhost'}/api/auth/profile`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://api.llmetrics.localhost/'}/api/auth/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

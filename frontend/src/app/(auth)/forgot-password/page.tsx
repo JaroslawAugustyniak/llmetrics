@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.starter.localhost";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.llmetrics.localhost/";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

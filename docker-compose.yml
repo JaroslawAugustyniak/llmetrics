@@ -1,18 +1,19 @@
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: llmetrics_postgres
+  mysql:
+    image: mysql:8.0
+    container_name: llmetrics_mysql
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "3305:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
     networks:
@@ -31,17 +32,17 @@ services:
     environment:
       VIRTUAL_HOST: api.llmetrics.localhost
       VIRTUAL_PORT: 8000
-      DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
       DB_DATABASE: ${DB_NAME}
-      DB_USER: ${DB_USER}
+      DB_USERNAME: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       APP_KEY: ${APP_KEY}
     expose:
       - "8000"
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
     networks:
       - default
@@ -56,17 +57,17 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      DB_CONNECTION: pgsql
-      DB_HOST: postgres
-      DB_PORT: 5432
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
       DB_DATABASE: ${DB_NAME}
-      DB_USER: ${DB_USER}
+      DB_USERNAME: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       APP_KEY: ${APP_KEY}
       QUEUE_CONNECTION: database
     command: php artisan queue:work --delay=3 --max-jobs=1000 --max-time=3600
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
       backend:
         condition: service_started
@@ -84,6 +85,7 @@ services:
     environment:
       VIRTUAL_HOST: llmetrics.localhost
       VIRTUAL_PORT: 3000
+      NEXT_PUBLIC_API_URL: http://api.llmetrics.localhost
     extra_hosts:
       - "api.llmetrics.localhost:host-gateway"
     expose:
@@ -95,7 +97,7 @@ services:
       - nginx-proxy-network
 
 volumes:
-  postgres_data:
+  mysql_data:
     driver: local
 
 networks:

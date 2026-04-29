@@ -1,6 +1,6 @@
 "use server";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.starter.localhost";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.llmetrics.localhost/";
 
 export async function validateToken(token: string) {
   if (!token) {

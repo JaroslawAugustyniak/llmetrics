@@ -1,15 +1,21 @@
 #!/bin/bash
 
-# Wait for PostgreSQL to be ready
-echo "Waiting for PostgreSQL to be ready..."
+# Wait for MySQL to be ready
+echo "Waiting for MySQL to be ready..."
 for i in {1..30}; do
-  if nc -z postgres 5432 2>/dev/null; then
-    echo "PostgreSQL is ready!"
+  if nc -z mysql 3306 2>/dev/null; then
+    echo "MySQL is ready!"
     break
   fi
-  echo "PostgreSQL not ready, waiting... ($i/30)"
+  echo "MySQL not ready, waiting... ($i/30)"
   sleep 1
 done
+
+# Fix storage directory permissions for Laravel
+echo "Setting up storage directory permissions..."
+mkdir -p storage/{logs,app,framework/{sessions,views,cache}}
+chmod -R 775 storage
+chown -R www-data:www-data storage bootstrap/cache
 
 # Install dependencies
 if [ ! -d "vendor" ]; then

@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.starter.localhost";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://api.llmetrics.localhost/";
 
 export async function registerUser(formData: FormData) {
   const name = formData.get("name") as string;
