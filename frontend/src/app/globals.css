@@ -63,7 +63,7 @@ html, body {
 
   /* Cards */
   .card {
-    @apply bg-white rounded-lg shadow-md border border-gray-200;
+    @apply bg-white rounded-lg shadow-md border border-gray-200 px-4 py-3;
   }
 
   /* Dropdowns */

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -56,5 +57,10 @@ class User extends Authenticatable
     public function isEmailVerified(): bool
     {
         return $this->email_verified_at !== null;
+    }
+
+    public function urlChecks(): HasMany
+    {
+        return $this->hasMany(UrlCheck::class);
     }
 }

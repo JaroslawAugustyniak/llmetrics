@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Loader2 } from 'lucide-react';
+import { LayoutDashboard, Search, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Image from "next/image";
 
@@ -16,6 +16,7 @@ export default function Sidebar() {
 
   const menuItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true },
+    { href: '/dashboard/checker', icon: Search, label: 'LLM Checker', exact: true },
   ];
 
   const isActive = (href: string, exact?: boolean) => {

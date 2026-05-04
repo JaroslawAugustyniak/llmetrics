@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UrlCheckController;
 use App\Mail\VerifyEmailMail;
 use App\Models\User;
 /*
@@ -71,4 +72,10 @@ Route::prefix('auth')->group(function () {
             return $request->user();
         });
     });
+});
+
+Route::middleware('auth:sanctum')->prefix('checks')->group(function () {
+    Route::post('/', [UrlCheckController::class, 'store']);
+    Route::get('/', [UrlCheckController::class, 'index']);
+    Route::get('/{id}', [UrlCheckController::class, 'show']);
 });

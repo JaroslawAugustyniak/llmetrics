@@ -1,0 +1,34 @@
+{
+  "project_context": {
+    "name": "LLM Visibility Checker",
+    "stack": {
+      "backend": "Laravel 11 (PHP 8.3)",
+      "frontend": "Next.js 14+ (App Router, Tailwind CSS, Shadcn UI)",
+      "communication": "REST API"
+    },
+    "goal": "Create a tool similar to Google PageSpeed Insights that checks if a URL is known, cited, and correctly classified by major LLMs (OpenAI, Anthropic, Gemini, Perplexity)."
+  },
+  "instructions": {
+    "step_1_architecture": "Plan the database schema in Laravel to store crawl history, scores for different models, and recommendation strings.",
+    "step_2_api_logic": "Design a service class in Laravel that sends prompts to LLMs (e.g., 'What do you know about [URL]?', 'Is [URL] a reliable source for [Topic]?') and parses the responses.",
+    "step_3_frontend_ui": "Draft a Next.js dashboard using Shadcn UI components. Use a 'Gauge Chart' for the overall visibility score and 'Progress Bars' for individual model presence.",
+    "step_4_recommendations": "Implement a logic that compares LLM responses with on-page SEO data to generate actionable 'Improvement Areas' (e.g., lack of structured data, inconsistent brand mentions)."
+  },
+  "desired_output_format": {
+    "type": "technical_implementation_plan",
+    "include": [
+      "Laravel Migration definitions",
+      "API Controller logic for LLM querying",
+      "Next.js Dashboard page structure (React components)",
+      "Mockup of the scoring algorithm (LLM Visibility Index)"
+    ]
+  },
+  "ui_preferences": {
+    "style": "Modern, Clean, SaaS-like",
+    "visuals": [
+      "Circular progress for main score",
+      "Radar chart for cross-model comparison",
+      "Traffic light system (Green/Yellow/Red) for recommendations"
+    ]
+  }
+}

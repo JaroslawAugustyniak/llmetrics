@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Mountain, Target, CheckSquare, CalendarDays, BanknoteArrowUp, FileText } from 'lucide-react';
+import { LayoutDashboard, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export default function MobileNav() {
@@ -11,6 +11,7 @@ export default function MobileNav() {
 
   const menuItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true },
+    { href: '/dashboard/checker', icon: Search, label: 'LLM Checker', exact: true },
   ];
 
   const isActive = (href: string, exact?: boolean) => {
