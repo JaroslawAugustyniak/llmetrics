@@ -52,9 +52,9 @@ export default function Sidebar() {
     <aside className="sidebar">
       <div className="sidebar-header">
         <Image
-          src="/images/logo.png"
+          src="/images/logo-biggg.png"
           alt="Logo"
-          width={80}
+          width={280}
           height={80}
           className="main-logo mx-auto"
           priority

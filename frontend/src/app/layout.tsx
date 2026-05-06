@@ -4,12 +4,12 @@ import type { Metadata, Viewport } from 'next';
 import { Providers } from '@/app/components/providers'; // dostosuj ścieżkę
 
 export const metadata: Metadata = {
-  title: 'WorkLogger',
-  description: 'Time tracking and project management',
+  title: 'LLMetrics',
+  description: "Track, measure, and improve your brand's visibility across AI tools like ChatGPT, Perplexity, and Claude.",
   icons: {
-    icon: '/images/favicon.png',
-    shortcut: '/images/favicon.png',
-    apple: '/images/favicon.png',
+    icon: '/images/logo.png',
+    shortcut: '/images/logo.png',
+    apple: '/images/logo.png',
   },
 };
 

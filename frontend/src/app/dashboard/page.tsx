@@ -33,6 +33,7 @@ export default function DashboardPage() {
 
         const data = await res.json();
         setUserName(data.data?.name || '');
+        router.push('/dashboard/checker');
       } catch (error) {
         console.error('Error fetching profile:', error);
         localStorage.removeItem('access_token');

@@ -84,16 +84,6 @@ export default function CheckerPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="page-title flex items-center gap-2">
-          <Search className="w-8 h-8" />
-          LLM Visibility Metrics
-        </h1>
-        <p className="page-subtitle">
-          Check if your URL is known and properly classified by major LLMs
-        </p>
-      </div>
 
       {/* Input Form */}
       <div className="card">

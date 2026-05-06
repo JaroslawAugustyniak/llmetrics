@@ -12,9 +12,9 @@ export default function DashboardLayout({
     <SessionProvider>
       <div className="dashboard-container">
         {/* Desktop Sidebar - hidden on mobile */}
-        <div className="hidden md:flex md:flex-col">
+        {/* <div className="hidden md:flex md:flex-col">
           <Sidebar />
-        </div>
+        </div> */}
 
         <div className="dashboard-main">
           <Topbar />

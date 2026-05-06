@@ -10,11 +10,11 @@ export default function Topbar() {
       {/* Logo - visible on mobile */}
       <div className="flex items-center gap-3 flex-shrink-0">
         <Image
-          src="/images/logo.svg"
+          src="/images/logo-biggg.png"
           alt="Logo"
-          width={40}
-          height={40}
-          className="main-logo mx-auto md:hidden"
+          width={180}
+          height={80}
+          className="main-logo mx-auto"
           priority
         />
       </div>
