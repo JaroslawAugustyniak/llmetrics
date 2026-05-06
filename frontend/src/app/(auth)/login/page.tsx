@@ -63,7 +63,7 @@ export default function LoginPage() {
       localStorage.setItem('access_token', result.data.access_token);
     }
 
-    router.push("/dashboard");
+    router.push("/dashboard/checker");
   };
 
   return (

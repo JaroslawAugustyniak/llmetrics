@@ -65,7 +65,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       APP_KEY: ${APP_KEY}
       QUEUE_CONNECTION: database
-    command: php artisan queue:work --delay=3 --max-jobs=1000 --max-time=3600
+      CONTAINER_TYPE: queue-worker
     depends_on:
       mysql:
         condition: service_healthy

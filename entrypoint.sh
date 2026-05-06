@@ -39,6 +39,18 @@ php artisan cache:clear
 echo "Running migrations..."
 php artisan migrate --force
 
-# Start supervisord (manages nginx + php-fpm)
+# Start supervisord (manages nginx + php-fpm for backend, or queue:work for worker)
 echo "Starting supervisor..."
-supervisord -c /etc/supervisor/conf.d/supervisord.conf
+echo "CONTAINER_TYPE=$CONTAINER_TYPE"
+if [ -z "$CONTAINER_TYPE" ]; then
+    echo "CONTAINER_TYPE not set, checking hostname..."
+    CONTAINER_TYPE=$(hostname)
+fi
+
+if [ "$CONTAINER_TYPE" = "queue-worker" ]; then
+    echo "Starting as QUEUE WORKER (with queue:work)..."
+    supervisord -c /etc/supervisor/conf.d/supervisord-worker.conf
+else
+    echo "Starting as WEB BACKEND (with nginx + php-fpm)..."
+    supervisord -c /etc/supervisor/conf.d/supervisord.conf
+fi

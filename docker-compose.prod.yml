@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: llmetrics_mysql_prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "127.0.0.1:3306:3306"
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - llmetrics_network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  backend:
+    image: ghcr.io/jaroslawaugustyniak/llmetrics:latest
+    container_name: llmetrics_backend_prod
+    restart: always
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_KEY: ${APP_KEY}
+      QUEUE_CONNECTION: database
+      CONTAINER_TYPE: combined
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks:
+      - llmetrics_network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  frontend:
+    image: node:20-bullseye as frontend-builder
+    container_name: llmetrics_frontend_build
+    working_dir: /web
+    volumes:
+      - ./frontend:/web
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    command: sh -c "npm ci --only=production && npm run build"
+
+  nginx:
+    image: nginx:alpine
+    container_name: llmetrics_nginx_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx-prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend/.next:/frontend/.next:ro
+      - ./frontend/public:/frontend/public:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+    depends_on:
+      - backend
+    networks:
+      - llmetrics_network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  llmetrics_network:
+    driver: bridge

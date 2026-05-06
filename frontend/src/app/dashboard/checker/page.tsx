@@ -88,7 +88,7 @@ export default function CheckerPage() {
       <div>
         <h1 className="page-title flex items-center gap-2">
           <Search className="w-8 h-8" />
-          LLM Visibility Checker
+          LLM Visibility Metrics
         </h1>
         <p className="page-subtitle">
           Check if your URL is known and properly classified by major LLMs

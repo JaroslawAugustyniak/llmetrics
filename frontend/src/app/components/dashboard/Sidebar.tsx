@@ -15,8 +15,8 @@ export default function Sidebar() {
   const [loadingHref, setLoadingHref] = useState<string | null>(null);
 
   const menuItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true },
-    { href: '/dashboard/checker', icon: Search, label: 'LLM Checker', exact: true },
+    // { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true },
+    { href: '/dashboard/checker', icon: Search, label: 'Metrics checker', exact: true },
   ];
 
   const isActive = (href: string, exact?: boolean) => {

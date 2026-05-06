@@ -22,8 +22,9 @@ WORKDIR /app
 COPY docker/nginx.conf /etc/nginx/sites-available/default
 RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# Copy supervisor config
+# Copy supervisor configs
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/supervisord-worker.conf /etc/supervisor/conf.d/supervisord-worker.conf
 
 # Copy entrypoint
 COPY entrypoint.sh /usr/local/bin/
