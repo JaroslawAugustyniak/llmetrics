@@ -30,13 +30,13 @@ cd temp
 
 # Skopiuj niezbędne pliki do /opt/llmetrics
 cp docker-compose.prod.yml /opt/llmetrics/
-cp .env.prod.example /opt/llmetrics/.env
-cp docker/nginx-prod.conf /opt/llmetrics/docker/
-cp docker/supervisord.conf /opt/llmetrics/docker/
-cp docker/supervisord-worker.conf /opt/llmetrics/docker/
-cp entrypoint.sh /opt/llmetrics/
+cp .env.prod.example ~/docker/llmetrics/.env
+cp docker/nginx-prod.conf ~/docker/llmetrics/docker/
+cp docker/supervisord.conf ~/docker/llmetrics/docker/
+cp docker/supervisord-worker.conf ~/docker/llmetrics/docker/
+cp entrypoint.sh ~/docker/llmetrics/
 
-cd /opt/llmetrics
+cd ~/docker/llmetrics
 rm -rf temp
 ```
 

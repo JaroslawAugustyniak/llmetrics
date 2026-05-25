@@ -1,5 +1,5 @@
 # Frontend build stage
-FROM node:20-bullseye as frontend-builder
+FROM node:20-bullseye AS frontend-builder
 
 WORKDIR /frontend
 
@@ -10,7 +10,7 @@ COPY frontend/ .
 RUN npm run build
 
 # Backend build stage
-FROM php:8.2-fpm as backend-builder
+FROM php:8.2-fpm AS backend-builder
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -25,7 +25,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 COPY backend/composer.json backend/composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Production stage
 FROM php:8.2-fpm

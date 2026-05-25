@@ -10,6 +10,9 @@ import HistoryTable from '@/app/components/checker/HistoryTable';
 interface UrlCheck {
   id: number;
   url: string;
+  overall_score: number | null;
+  status: string;
+  created_at: string;
 }
 
 export default function CheckerPage() {

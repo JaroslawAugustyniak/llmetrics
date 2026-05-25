@@ -301,7 +301,7 @@ export default function CheckerDetailsPage() {
       {/* Model Scores */}
       {check.llm_results && check.llm_results.some(r => r.score !== null) && (
         <div className="card">
-          <ModelScores results={check.llm_results.filter(r => r.score !== null)} />
+          <ModelScores results={check.llm_results.filter((r): r is LlmResult & { score: number } => r.score !== null)} />
         </div>
       )}
 
