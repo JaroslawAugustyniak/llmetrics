@@ -1,5 +1,16 @@
-# Build stage
-FROM php:8.2-fpm as builder
+# Frontend build stage
+FROM node:20-bullseye as frontend-builder
+
+WORKDIR /frontend
+
+COPY frontend/package*.json ./
+RUN npm ci
+
+COPY frontend/ .
+RUN npm run build
+
+# Backend build stage
+FROM php:8.2-fpm as backend-builder
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -34,8 +45,12 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copy from builder
-COPY --from=builder /app/vendor ./vendor
+# Copy frontend artifacts from frontend-builder
+COPY --from=frontend-builder /frontend/.next /app/public/.next
+COPY --from=frontend-builder /frontend/public /app/public/frontend
+
+# Copy from backend-builder
+COPY --from=backend-builder /app/vendor ./vendor
 
 # Copy backend application
 COPY backend/ .
