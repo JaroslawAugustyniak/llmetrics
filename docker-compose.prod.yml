@@ -48,6 +48,7 @@ services:
       - "8000:8000"
     networks:
       - llmetrics_network
+      - npm_network
     deploy:
       resources:
         limits:
@@ -69,6 +70,7 @@ services:
       - ./frontend/public:/app/public:ro
     networks:
       - llmetrics_network
+      - npm_network
 
 volumes:
   mysql_data:
