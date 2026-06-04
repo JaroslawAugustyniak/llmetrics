@@ -72,6 +72,34 @@ services:
       - llmetrics_network
       - npm_network
 
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llmetrics_queue_worker
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_NAME}
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      APP_KEY: ${APP_KEY}
+      QUEUE_CONNECTION: database
+      CONTAINER_TYPE: queue-worker
+    depends_on:
+      mysql:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    networks:
+      - llmetrics_network
+    restart: unless-stopped
+
 volumes:
   mysql_data:
     driver: local
