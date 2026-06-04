@@ -16,29 +16,49 @@ class LlmVisibilityService
     public function __construct()
     {
         $openaiKey = config('app.openai_api_key') ?: env('OPENAI_API_KEY');
-        if (!$openaiKey) {
-            throw new \Exception('OPENAI_API_KEY is not set');
+        if ($openaiKey) {
+            $this->openAiClient = OpenAI::client($openaiKey);
         }
-        $this->openAiClient = OpenAI::client($openaiKey);
 
         $geminiKey = env('GEMINI_API_KEY');
-        if (!$geminiKey) {
-            throw new \Exception('GEMINI_API_KEY is not set');
-        }
         $this->geminiApiKey = $geminiKey;
+    }
+
+    public function validateDependencies(): array
+    {
+        $errors = [];
+
+        if (!config('app.openai_api_key') && !env('OPENAI_API_KEY')) {
+            $errors[] = 'OPENAI_API_KEY is not configured';
+        }
+
+        if (!env('GEMINI_API_KEY')) {
+            $errors[] = 'GEMINI_API_KEY is not configured';
+        }
+
+        return $errors;
     }
 
     public function check(string $url, User $user): UrlCheck
     {
-        $urlCheck = UrlCheck::create([
-            'user_id' => $user->id,
-            'url' => $url,
-            'status' => 'pending',
-        ]);
+        try {
+            $urlCheck = UrlCheck::create([
+                'user_id' => $user->id,
+                'url' => $url,
+                'status' => 'pending',
+            ]);
 
-        \App\Jobs\ProcessUrlCheck::dispatch($urlCheck);
+            \App\Jobs\ProcessUrlCheck::dispatch($urlCheck);
 
-        return $urlCheck;
+            return $urlCheck;
+        } catch (\Exception $e) {
+            \Log::error('Failed to create URL check', [
+                'user_id' => $user->id,
+                'url' => $url,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
     }
 
     public function processCheck(UrlCheck $urlCheck): void

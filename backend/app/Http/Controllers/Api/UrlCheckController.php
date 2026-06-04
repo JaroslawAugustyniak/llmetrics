@@ -45,6 +45,16 @@ class UrlCheckController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
+            // Validate dependencies first
+            $dependencyErrors = $this->service->validateDependencies();
+            if (!empty($dependencyErrors)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Server configuration error: missing API keys',
+                    'errors' => $dependencyErrors,
+                ], 503);
+            }
+
             $validated = $request->validate([
                 'url' => 'required|url|max:2048',
             ]);
@@ -53,7 +63,7 @@ class UrlCheckController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'URL check completed successfully',
+                'message' => 'URL check started successfully',
                 'data' => $check,
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -63,9 +73,15 @@ class UrlCheckController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
+            \Log::error('URL check error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'url' => $validated['url'] ?? null,
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to check URL: ' . $e->getMessage(),
+                'message' => 'Failed to process URL check. Please try again later.',
+                'error_code' => 'CHECK_FAILED',
             ], 500);
         }
     }
