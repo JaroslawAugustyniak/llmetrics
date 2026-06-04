@@ -9,8 +9,8 @@ use OpenAI\Client;
 
 class LlmVisibilityService
 {
-    private Client $openAiClient;
-    private string $geminiApiKey;
+    private ?Client $openAiClient = null;
+    private ?string $geminiApiKey = null;
     private const MODELS = ['openai', 'gemini'];
 
     public function __construct()
@@ -104,6 +104,10 @@ class LlmVisibilityService
     private function queryOpenAi(string $url): array
     {
         try {
+            if (!$this->openAiClient) {
+                throw new \Exception("OpenAI client not configured");
+            }
+
             $response = $this->openAiClient->chat()->create([
                 'model' => 'gpt-4o-mini',
                 'messages' => [
@@ -173,6 +177,10 @@ For each recommendation, assess its priority:
     private function queryGemini(string $url): array
     {
         try {
+            if (!$this->geminiApiKey) {
+                throw new \Exception("Gemini API key not configured");
+            }
+
             $systemPrompt = 'You are an expert SEO and web visibility consultant. Analyze websites and provide detailed, actionable recommendations. Respond ONLY with valid JSON, no other text. Return a JSON object with these exact fields:
 {
   "familiarity_score": <number 0-10, your familiarity with this website>,
