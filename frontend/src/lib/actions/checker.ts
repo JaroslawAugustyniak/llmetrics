@@ -27,6 +27,9 @@ export async function checkUrl(url: string, token: string) {
 
 export async function getChecks(token: string, page: number = 1) {
   try {
+
+    
+
     const res = await fetch(`${API_URL}/api/checks?page=${page}`, {
       headers: {
         'Authorization': `Bearer ${token}`,

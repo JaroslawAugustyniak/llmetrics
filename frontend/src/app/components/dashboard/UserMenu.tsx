@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Menu, LogOut, User } from 'lucide-react';
+import { Menu, LogOut, User, Key } from 'lucide-react';
 import Swal from 'sweetalert2';
 import ProfileEditModal from '@/app/components/profile/ProfileEditModal';
+import ApiKeysModal from '@/app/components/api-keys/ApiKeysModal';
 
 export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
   const router = useRouter();
@@ -14,6 +15,7 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isApiKeysModalOpen, setIsApiKeysModalOpen] = useState(false);
   const [userName, setUserName] = useState<string>('');
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -93,6 +95,11 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
     setIsProfileModalOpen(true);
   };
 
+  const handleApiKeys = () => {
+    setIsOpen(false);
+    setIsApiKeysModalOpen(true);
+  };
+
   return (
     <div className="relative" ref={menuRef}>
       {/* Trigger Button */}
@@ -119,6 +126,14 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
             {t('editProfile')}
           </button>
 
+          <button
+            onClick={handleApiKeys}
+            className="dropdown-item"
+          >
+            <Key size={16} />
+            {t('apiKeys.menuItem') || 'API Keys'}
+          </button>
+
           <div className="dropdown-divider"></div>
           </>
           )}
@@ -136,6 +151,12 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
       <ProfileEditModal
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
+      />
+
+      {/* API Keys Modal */}
+      <ApiKeysModal
+        isOpen={isApiKeysModalOpen}
+        onClose={() => setIsApiKeysModalOpen(false)}
       />
     </div>
   );

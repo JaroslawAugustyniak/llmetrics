@@ -46,13 +46,13 @@ class UrlCheckController extends Controller
     {
         try {
             // Validate dependencies first
-            $dependencyErrors = $this->service->validateDependencies();
+            $dependencyErrors = $this->service->validateDependencies($request->user());
             if (!empty($dependencyErrors)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Server configuration error: missing API keys',
+                    'message' => 'API keys are not configured',
                     'errors' => $dependencyErrors,
-                ], 503);
+                ], 400);
             }
 
             $validated = $request->validate([

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UrlCheckController;
+use App\Http\Controllers\Api\ApiKeyController;
 use App\Mail\VerifyEmailMail;
 use App\Models\User;
 /*
@@ -71,6 +72,8 @@ Route::prefix('auth')->group(function () {
         Route::get('/me', function (Request $request) {
             return $request->user();
         });
+        Route::get('/api-keys', [ApiKeyController::class, 'show']);
+        Route::post('/api-keys', [ApiKeyController::class, 'update']);
     });
 });
 

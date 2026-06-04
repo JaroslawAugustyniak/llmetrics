@@ -13,30 +13,39 @@ class LlmVisibilityService
     private ?string $geminiApiKey = null;
     private const MODELS = ['openai', 'gemini'];
 
-    public function __construct()
+    public function __construct() {}
+
+    public function validateDependencies(\App\Models\User $user): array
     {
-        $openaiKey = config('app.openai_api_key') ?: env('OPENAI_API_KEY');
+        $errors = [];
+        $hasAtLeastOneKey = false;
+
+        $openaiKey = $user->getApiKey('openai');
+        if ($openaiKey) {
+            $hasAtLeastOneKey = true;
+        }
+
+        $geminiKey = $user->getApiKey('gemini');
+        if ($geminiKey) {
+            $hasAtLeastOneKey = true;
+        }
+
+        if (!$hasAtLeastOneKey) {
+            $errors[] = 'At least one API key must be configured (OpenAI or Gemini)';
+        }
+
+        return $errors;
+    }
+
+    private function resolveClientsForUser(\App\Models\User $user): void
+    {
+        $openaiKey = $user->getApiKey('openai');
         if ($openaiKey) {
             $this->openAiClient = OpenAI::client($openaiKey);
         }
 
-        $geminiKey = env('GEMINI_API_KEY');
+        $geminiKey = $user->getApiKey('gemini');
         $this->geminiApiKey = $geminiKey;
-    }
-
-    public function validateDependencies(): array
-    {
-        $errors = [];
-
-        if (!config('app.openai_api_key') && !env('OPENAI_API_KEY')) {
-            $errors[] = 'OPENAI_API_KEY is not configured';
-        }
-
-        if (!env('GEMINI_API_KEY')) {
-            $errors[] = 'GEMINI_API_KEY is not configured';
-        }
-
-        return $errors;
     }
 
     public function check(string $url, User $user): UrlCheck
@@ -64,10 +73,23 @@ class LlmVisibilityService
     public function processCheck(UrlCheck $urlCheck): void
     {
         try {
+            $user = $urlCheck->user ?? $urlCheck->load('user')->user;
+            $this->resolveClientsForUser($user);
+
             $results = [];
             $errors = [];
+            $availableModels = [];
 
-            foreach (self::MODELS as $model) {
+            // Sprawdzić które modele są dostępne
+            if ($user->getApiKey('openai')) {
+                $availableModels[] = 'openai';
+            }
+            if ($user->getApiKey('gemini')) {
+                $availableModels[] = 'gemini';
+            }
+
+            // Testować tylko dostępne modele
+            foreach ($availableModels as $model) {
                 try {
                     $results[$model] = $this->queryModel($model, $urlCheck->url);
                 } catch (\Exception $e) {
@@ -78,7 +100,7 @@ class LlmVisibilityService
 
             if (empty($results)) {
                 $urlCheck->update(['status' => 'failed']);
-                throw new \Exception("All models failed: " . json_encode($errors));
+                throw new \Exception("All available models failed: " . json_encode($errors));
             }
 
             $this->storeResults($urlCheck, $results, $errors);
@@ -101,19 +123,9 @@ class LlmVisibilityService
         };
     }
 
-    private function queryOpenAi(string $url): array
+    private function getSystemPrompt(): string
     {
-        try {
-            if (!$this->openAiClient) {
-                throw new \Exception("OpenAI client not configured");
-            }
-
-            $response = $this->openAiClient->chat()->create([
-                'model' => 'gpt-4o-mini',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => 'You are an expert SEO and web visibility consultant. Analyze websites and provide detailed, actionable recommendations. Respond ONLY with valid JSON, no other text. Return a JSON object with these exact fields:
+        return 'You are an expert SEO and web visibility consultant. Analyze websites and provide detailed, actionable recommendations. Respond ONLY with valid JSON, no other text. Return a JSON object with these exact fields:
 {
   "familiarity_score": <number 0-10, your familiarity with this website>,
   "is_known": <boolean, true if you recognize this website>,
@@ -128,11 +140,12 @@ class LlmVisibilityService
       "priority": <string, one of: "critical", "high", "medium", "low">
     }
   ]
-}',
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => "Analyze this website and provide detailed JSON assessment with structured visibility improvement recommendations: {$url}
+}';
+    }
+
+    private function getUserPrompt(string $url): string
+    {
+        return "Analyze this website and provide detailed JSON assessment with structured visibility improvement recommendations: {$url}
 
 Evaluate:
 1. SEO visibility (meta tags, structured data, schema markup, keywords)
@@ -145,7 +158,26 @@ For each recommendation, assess its priority:
 - critical: breaks core functionality or severely impacts visibility
 - high: significantly impacts SEO or user experience
 - medium: moderate improvement opportunity
-- low: nice-to-have optimization",
+- low: nice-to-have optimization";
+    }
+
+    private function queryOpenAi(string $url): array
+    {
+        try {
+            if (!$this->openAiClient) {
+                throw new \Exception("OpenAI API key not configured");
+            }
+
+            $response = $this->openAiClient->chat()->create([
+                'model' => 'gpt-4o-mini',
+                'messages' => [
+                    [
+                        'role' => 'system',
+                        'content' => $this->getSystemPrompt(),
+                    ],
+                    [
+                        'role' => 'user',
+                        'content' => $this->getUserPrompt($url),
                     ],
                 ],
                 'temperature' => 0.7,
@@ -181,46 +213,14 @@ For each recommendation, assess its priority:
                 throw new \Exception("Gemini API key not configured");
             }
 
-            $systemPrompt = 'You are an expert SEO and web visibility consultant. Analyze websites and provide detailed, actionable recommendations. Respond ONLY with valid JSON, no other text. Return a JSON object with these exact fields:
-{
-  "familiarity_score": <number 0-10, your familiarity with this website>,
-  "is_known": <boolean, true if you recognize this website>,
-  "summary": <string, 2-3 sentences about what you know about this website>,
-  "recommendations": [
-    {
-      "title": <string, short improvement suggestion>,
-      "description": <string, detailed explanation of why this matters>,
-      "affected_area": <string, one of: "SEO", "Content", "Technical", "Brand", "User Experience">,
-      "solution": <string, specific steps to implement this improvement>,
-      "expected_impact": <string, brief description of expected benefits>,
-      "priority": <string, one of: "critical", "high", "medium", "low">
-    }
-  ]
-}';
-
-            $userPrompt = "Analyze this website and provide detailed JSON assessment with structured visibility improvement recommendations: {$url}
-
-Evaluate:
-1. SEO visibility (meta tags, structured data, schema markup, keywords)
-2. Content clarity and quality (is the purpose/value clear?)
-3. Brand presence and authority (recognition, citations, credibility signals)
-4. Technical optimization (page speed, mobile-friendliness, accessibility)
-5. User experience (navigation, design, conversion paths)
-
-For each recommendation, assess its priority:
-- critical: breaks core functionality or severely impacts visibility
-- high: significantly impacts SEO or user experience
-- medium: moderate improvement opportunity
-- low: nice-to-have optimization";
-
             $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $this->geminiApiKey;
 
             $payload = [
-                'systemInstruction' => ['parts' => [['text' => $systemPrompt]]],
+                'systemInstruction' => ['parts' => [['text' => $this->getSystemPrompt()]]],
                 'contents' => [
                     [
                         'parts' => [
-                            ['text' => $userPrompt],
+                            ['text' => $this->getUserPrompt($url)],
                         ],
                     ],
                 ],

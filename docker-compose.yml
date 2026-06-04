@@ -85,7 +85,7 @@ services:
     environment:
       VIRTUAL_HOST: llmetrics.localhost
       VIRTUAL_PORT: 3000
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://backend:8000/api
     extra_hosts:
       - "api.llmetrics.localhost:host-gateway"
     expose:

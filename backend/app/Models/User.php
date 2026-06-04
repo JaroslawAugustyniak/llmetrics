@@ -63,4 +63,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(UrlCheck::class);
     }
+
+    public function apiKeys(): HasMany
+    {
+        return $this->hasMany(UserApiKey::class);
+    }
+
+    public function getApiKey(string $provider): ?string
+    {
+        return $this->apiKeys()->where('provider', $provider)->first()?->key_value;
+    }
 }

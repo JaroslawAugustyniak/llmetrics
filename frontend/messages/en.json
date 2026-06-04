@@ -428,6 +428,21 @@
     "currentPasswordIncorrect": "Current password is incorrect",
     "profileUpdated": "Profile updated successfully",
     "logoutWarning": "You will be logged out to apply changes",
-    "logoutWarningTitle": "Profile Updated"
+    "logoutWarningTitle": "Profile Updated",
+    "apiKeys": {
+      "title": "API Keys",
+      "menuItem": "API Keys",
+      "openaiKey": "OpenAI API Key",
+      "geminiKey": "Gemini API Key",
+      "keySet": "✓ Configured",
+      "keyNotSet": "Not configured",
+      "leaveEmpty": "Leave empty to keep current key",
+      "notConfigured": "Not configured",
+      "noChanges": "No keys to update",
+      "successTitle": "Keys Updated",
+      "successMessage": "API keys have been updated successfully",
+      "save": "Save",
+      "saving": "Saving..."
+    }
   }
 }

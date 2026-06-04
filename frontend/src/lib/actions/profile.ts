@@ -27,6 +27,10 @@ export async function getProfile(token?: string) {
 
     const data = await res.json();
 
+    // if (res.ok) {
+    //   throw new Error(`Failed to get profile ${API_URL}/api/auth/profile`);
+    // }
+
     if (!res.ok) {
       throw new Error(data.message || 'Failed to get profile');
     }

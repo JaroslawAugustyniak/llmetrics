@@ -89,7 +89,22 @@
     "currentPasswordRequired": "Aktualne hasło jest wymagane do zmiany hasła",
     "currentPasswordIncorrect": "Aktualne hasło jest nieprawidłowe",
     "savingError": "Wystąpił błąd podczas zapisywania",
-    "saving": "Zapisywanie..."
+    "saving": "Zapisywanie...",
+    "apiKeys": {
+      "title": "Klucze API",
+      "menuItem": "Klucze API",
+      "openaiKey": "Klucz OpenAI API",
+      "geminiKey": "Klucz Gemini API",
+      "keySet": "✓ Skonfigurowany",
+      "keyNotSet": "Niezgodnie skonfigurowany",
+      "leaveEmpty": "Pozostaw puste, aby zachować aktualny klucz",
+      "notConfigured": "Nie skonfigurowany",
+      "noChanges": "Nie dodano żadnych kluczy do aktualizacji",
+      "successTitle": "Klucze zaktualizowane",
+      "successMessage": "Klucze API zostały pomyślnie zaktualizowane",
+      "save": "Zapisz",
+      "saving": "Zapisywanie..."
+    }
   },
   "dashboard": {
     "welcome": "Witaj, {name} 👋",
