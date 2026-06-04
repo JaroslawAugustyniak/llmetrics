@@ -88,6 +88,9 @@ jobs:
             # Start services
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
 
+            # Copy .env to backend container
+            docker compose -f docker-compose.prod.yml cp backend/.env backend:/app/.env 2>/dev/null || true
+
             # Run migrations
             docker compose -f docker-compose.prod.yml exec -T backend php artisan migrate --force
 
@@ -95,6 +98,7 @@ jobs:
             docker compose -f docker-compose.prod.yml exec -T backend php artisan config:cache
             docker compose -f docker-compose.prod.yml exec -T backend php artisan route:cache
             docker compose -f docker-compose.prod.yml exec -T backend php artisan view:cache
+            docker compose -f docker-compose.prod.yml exec -T backend php artisan cache:clear
 
             # Cleanup
             docker image prune -f
