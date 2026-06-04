@@ -1,6 +1,6 @@
 'use server';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://api.llmetrics.localhost/';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export type ApiKeyStatus = {
   openai: boolean;
