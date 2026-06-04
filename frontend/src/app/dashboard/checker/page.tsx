@@ -54,6 +54,9 @@ export default function CheckerPage() {
 
   const handleCheck = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // setError('You are not authenticated');
+      
     setError('');
 
     if (!urlInput.trim()) {
