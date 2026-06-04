@@ -130,7 +130,7 @@ export default function UserMenu({ isPortalUser }: { isPortalUser: boolean }) {
             onClick={handleApiKeys}
             className="dropdown-item"
           >
-            <Key size={16} />
+            <Key size={17} />
             {t('apiKeys.menuItem') || 'API Keys'}
           </button>
 
