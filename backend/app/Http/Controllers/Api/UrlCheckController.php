@@ -56,7 +56,7 @@ class UrlCheckController extends Controller
             }
 
             $validated = $request->validate([
-                'url' => 'required|url|max:2048',
+                'url' => 'required|string|max:2048',
             ]);
 
             $check = $this->service->check($validated['url'], $request->user());

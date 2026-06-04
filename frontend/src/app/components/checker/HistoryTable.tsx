@@ -42,7 +42,7 @@ export default function HistoryTable({ items, loading }: HistoryTableProps) {
       <table className="w-full">
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50">
-            <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">URL</th>
+            <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Content</th>
             <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Score</th>
             <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
             <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Date</th>
@@ -52,10 +52,8 @@ export default function HistoryTable({ items, loading }: HistoryTableProps) {
         <tbody>
           {items.map((item) => (
             <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-              <td className="px-4 py-3 text-sm text-gray-900">
-                <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate block max-w-md">
-                  {item.url}
-                </a>
+              <td className="px-4 py-3 text-sm text-gray-900 truncate max-w-md">
+                {item.url}
               </td>
               <td className={`px-4 py-3 text-sm font-bold ${getScoreColor(item.overall_score)}`}>
                 {item.overall_score !== null ? `${item.overall_score}/100` : '—'}

@@ -60,7 +60,7 @@ export default function CheckerPage() {
     setError('');
 
     if (!urlInput.trim()) {
-      setError('Please enter a URL');
+      setError('Please enter content to check');
       return;
     }
 
@@ -95,13 +95,13 @@ export default function CheckerPage() {
       <div className="card">
         <form onSubmit={handleCheck} className="space-y-4">
           <div>
-            <label className="label">Website URL</label>
+            <label className="label">Content to Check</label>
             <div className="flex gap-2">
               <input
-                type="url"
+                type="text"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="https://example.com"
+                placeholder="Enter URL, password, company name, tool name, etc."
                 className="input flex-1"
                 disabled={isLoading}
               />

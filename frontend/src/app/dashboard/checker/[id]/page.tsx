@@ -138,25 +138,19 @@ export default function CheckerDetailsPage() {
             </button>
             <div>
               <h1 className="page-title">Analyzing...</h1>
-              <p className="page-subtitle">Processing your URL</p>
+              <p className="page-subtitle">Processing your content</p>
             </div>
           </div>
         </div>
 
         <div className="card">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Website Information</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Content Information</h2>
           <div className="flex items-center justify-between gap-4 mb-6">
             <div className="flex-1 min-w-0">
-              <p className="text-gray-600 text-sm mb-1">URL</p>
-              <a
-                href={check.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 hover:underline break-all flex items-center gap-2 font-medium"
-              >
+              <p className="text-gray-600 text-sm mb-1">Content</p>
+              <p className="text-gray-900 break-all font-medium">
                 {check.url}
-                <ExternalLink className="w-4 h-4 shrink-0" />
-              </a>
+              </p>
             </div>
           </div>
 
@@ -190,7 +184,7 @@ export default function CheckerDetailsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <Loader className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-              <p className="text-gray-600 font-medium mb-2">Analyzing your website</p>
+              <p className="text-gray-600 font-medium mb-2">Analyzing your content</p>
               <p className="text-gray-500 text-sm">
                 Sending requests to LLM models in the background...
               </p>
@@ -241,21 +235,15 @@ export default function CheckerDetailsPage() {
         </div>
       </div>
 
-      {/* URL Info Card */}
+      {/* Content Info Card */}
       <div className="card">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Website Information</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Content Information</h2>
         <div className="flex items-center justify-between gap-4 mb-6">
           <div className="flex-1 min-w-0">
-            <p className="text-gray-600 text-sm mb-1">URL</p>
-            <a
-              href={check.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-700 hover:underline break-all flex items-center gap-2 font-medium"
-            >
+            <p className="text-gray-600 text-sm mb-1">Content</p>
+            <p className="text-gray-900 break-all font-medium">
               {check.url}
-              <ExternalLink className="w-4 h-4 shrink-0" />
-            </a>
+            </p>
           </div>
         </div>
 
