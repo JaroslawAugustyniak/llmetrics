@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useSessionContext } from '@/app/components/providers/SessionProvider';
 import { getCheck } from '@/lib/actions/checker';
-import { ArrowLeft, Loader, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Loader, ExternalLink, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import ScoreGauge from '@/app/components/checker/ScoreGauge';
 import ModelScores from '@/app/components/checker/ModelScores';
@@ -59,6 +59,7 @@ export default function CheckerDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isRechecking, setIsRechecking] = useState(false);
 
   const id = params.id as string;
 
@@ -109,6 +110,27 @@ export default function CheckerDetailsPage() {
     }
   };
 
+  const handleRecheck = async () => {
+    if (!session?.token || !check?.url) return;
+
+    setIsRechecking(true);
+    setError('');
+
+    try {
+      const { checkUrl } = await import('@/lib/actions/checker');
+      const res = await checkUrl(check.url, session.token);
+      if (res.success) {
+        router.push(`/dashboard/checker/${res.data.id}`);
+      } else {
+        setError(res.error || 'Failed to recheck content');
+        setIsRechecking(false);
+      }
+    } catch (err) {
+      setError('Failed to recheck content');
+      setIsRechecking(false);
+    }
+  };
+
   if (isInitializing) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -141,6 +163,14 @@ export default function CheckerDetailsPage() {
               <p className="page-subtitle">Processing your content</p>
             </div>
           </div>
+          <button
+            onClick={handleRecheck}
+            disabled={isRechecking}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRechecking ? 'animate-spin' : ''}`} />
+            Recheck
+          </button>
         </div>
 
         <div className="card">
@@ -233,6 +263,14 @@ export default function CheckerDetailsPage() {
             </p>
           </div>
         </div>
+        <button
+          onClick={handleRecheck}
+          disabled={isRechecking}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition"
+        >
+          <RefreshCw className={`w-4 h-4 ${isRechecking ? 'animate-spin' : ''}`} />
+          Recheck
+        </button>
       </div>
 
       {/* Content Info Card */}
