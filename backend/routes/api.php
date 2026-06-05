@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UrlCheckController;
 use App\Http\Controllers\Api\ApiKeyController;
 use App\Mail\VerifyEmailMail;
+use App\Mail\ResetPasswordMail;
 use App\Models\User;
 /*
 |--------------------------------------------------------------------------
@@ -28,30 +29,28 @@ Route::get('/test', function () {
     ]);
 });
 
-Route::post('/test-email', function (Request $request) {
+Route::get('/test-email', function () {
     try {
-        $validated = $request->validate([
-            'email' => 'required|email',
-        ]);
+        $user = User::find(1);
 
-        // Create a test user object
-        $testUser = new User([
-            'name' => 'Test User',
-            'email' => $validated['email'],
-        ]);
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User with ID 1 not found',
+            ], 404);
+        }
 
-        // Send test email
-        Mail::send(new VerifyEmailMail($testUser, '123456'));
+        Mail::queue(new ResetPasswordMail($user, 'test_token_12345'));
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Test email sent successfully to ' . $validated['email'],
+            'message' => 'Test email queued successfully for ' . $user->email,
             'timestamp' => now(),
         ]);
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => 'Failed to send test email: ' . $e->getMessage(),
+            'message' => 'Failed to queue test email: ' . $e->getMessage(),
         ], 500);
     }
 });
