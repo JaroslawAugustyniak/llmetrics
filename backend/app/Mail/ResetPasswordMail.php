@@ -28,7 +28,7 @@ class ResetPasswordMail extends Mailable
 
     public function content(): Content
     {
-        $frontendUrl = config('app.frontend_url') ?? 'http://app.starter.localhost';
+        $frontendUrl = config('app.frontend_url') ?? 'http://llmetrics.localhost';
         $resetLink = "{$frontendUrl}/reset-password?token={$this->token}";
 
         return new Content(

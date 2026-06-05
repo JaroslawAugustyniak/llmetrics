@@ -193,5 +193,6 @@ return [
 
     'openai_api_key' => env('OPENAI_API_KEY'),
     'gemini_api_key' => env('GEMINI_API_KEY'),
+    'frontend_url' => env('FRONTEND_URL'),
 
 ];
